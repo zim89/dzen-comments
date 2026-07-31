@@ -1,0 +1,20 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+*.log
+
+# docs
+docs/
+
+# uploads (фаза 6)
+server/uploads/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store

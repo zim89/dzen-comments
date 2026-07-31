@@ -1,0 +1,105 @@
+# Server — REST API
+
+Backend для SPA «Комментарии»: NestJS-приложение с REST API, WebSocket, работой с PostgreSQL и Redis.
+
+Общее описание проекта и запуск всего стека — в [README](../README.md) в корне репозитория.
+
+## Стек
+
+- NestJS 11
+- Prisma 7 + PostgreSQL (`@prisma/adapter-pg`)
+- Redis (ioredis)
+- BullMQ (очередь задач)
+- JWT (авторизация модератора)
+
+## Структура
+
+```
+src/
+├── main.ts
+├── app.module.ts
+├── prisma/          # PrismaModule, подключение к PostgreSQL
+├── redis/           # RedisModule
+└── health/          # GET /health
+
+prisma/
+└── schema.prisma    # модели данных
+
+prisma.config.ts     # URL подключения к БД (Prisma 7)
+```
+
+## Переменные окружения
+
+Скопируй шаблон и при необходимости отредактируй значения:
+
+```bash
+cp .env.example .env
+```
+
+- `DATABASE_URL` — PostgreSQL
+- `REDIS_URL` — Redis
+- `PORT` — порт API (по умолчанию 4040)
+- `JWT_SECRET`, `JWT_EXPIRES_IN` — для модератора
+
+Перед запуском API подними инфраструктуру из корня репозитория:
+
+```bash
+docker compose up -d
+```
+
+## Установка и запуск
+
+```bash
+npm install
+npx prisma generate
+npm run start:dev
+```
+
+API: http://localhost:4040
+
+### Production
+
+```bash
+npm run build
+npm run start:prod
+```
+
+## Prisma
+
+```bash
+npx prisma generate      # сгенерировать клиент
+npm run prisma:migrate     # применить миграции
+npm run prisma:studio      # UI для просмотра данных
+```
+
+Конфигурация подключения к БД — в `prisma.config.ts`, схема моделей — в `prisma/schema.prisma`.
+
+## API
+
+### Реализовано
+
+- `GET /health` — проверка API, PostgreSQL и Redis
+
+## Скрипты
+
+```bash
+npm run start:dev    # разработка с hot-reload
+npm run build        # сборка
+npm run lint         # ESLint
+npm run test         # unit-тесты
+npm run test:e2e     # e2e-тесты
+```
+
+## Проверка
+
+```bash
+curl http://localhost:4040/health
+```
+
+```json
+{
+  "status": "ok",
+  "db": "ok",
+  "redis": "ok"
+}
+```
