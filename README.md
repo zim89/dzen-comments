@@ -52,6 +52,7 @@ SPA-приложение для публикации и просмотра ко�
 
 ```
 ├── docker-compose.yml   # PostgreSQL, Redis, API, клиент
+├── database/            # SQL DDL
 ├── server/              # REST API (NestJS)
 └── client/              # SPA (React)
 ```
@@ -81,6 +82,8 @@ docker compose up -d
 cd server
 npm install
 npx prisma generate
+npm run prisma:migrate
+npm run prisma:seed
 npm run start:dev
 ```
 

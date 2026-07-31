@@ -23,7 +23,11 @@ src/
 └── health/          # GET /health
 
 prisma/
-└── schema.prisma    # модели данных
+├── schema.prisma    # модели данных
+└── seed.ts          # тестовые данные и модератор
+
+database/
+└── schema.sql       # SQL DDL (корень репозитория)
 
 prisma.config.ts     # URL подключения к БД (Prisma 7)
 ```
@@ -40,6 +44,7 @@ cp .env.example .env
 - `REDIS_URL` — Redis
 - `PORT` — порт API (по умолчанию 4040)
 - `JWT_SECRET`, `JWT_EXPIRES_IN` — для модератора
+- `MODERATOR_EMAIL`, `MODERATOR_PASSWORD` — учётные данные модератора для seed
 
 Перед запуском API подними инфраструктуру из корня репозитория:
 
@@ -52,6 +57,8 @@ docker compose up -d
 ```bash
 npm install
 npx prisma generate
+npm run prisma:migrate
+npm run prisma:seed
 npm run start:dev
 ```
 
@@ -68,11 +75,13 @@ npm run start:prod
 
 ```bash
 npx prisma generate      # сгенерировать клиент
-npm run prisma:migrate     # применить миграции
-npm run prisma:studio      # UI для просмотра данных
+npm run prisma:migrate   # применить миграции
+npm run prisma:seed      # тестовые комментарии и модератор
+npm run prisma:studio    # UI для просмотра данных
 ```
 
-Конфигурация подключения к БД — в `prisma.config.ts`, схема моделей — в `prisma/schema.prisma`.
+Конфигурация подключения к БД — в `prisma.config.ts`, схема моделей — в `prisma/schema.prisma`.  
+SQL DDL для просмотра структуры таблиц — в `database/schema.sql` (корень репозитория).
 
 ## API
 
@@ -86,8 +95,6 @@ npm run prisma:studio      # UI для просмотра данных
 npm run start:dev    # разработка с hot-reload
 npm run build        # сборка
 npm run lint         # ESLint
-npm run test         # unit-тесты
-npm run test:e2e     # e2e-тесты
 ```
 
 ## Проверка

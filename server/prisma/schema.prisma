@@ -6,3 +6,61 @@ datasource db {
   provider = "postgresql"
 }
 
+enum AttachmentType {
+  IMAGE
+  TEXT
+
+  @@map("attachment_type")
+}
+
+enum UserRole {
+  MODERATOR
+
+  @@map("user_role")
+}
+
+model Comment {
+  id         String      @id @default(cuid())
+  userName   String      @map("user_name")
+  email      String
+  homePage   String?     @map("home_page")
+  text       String
+  parentId   String?     @map("parent_id")
+  parent     Comment?    @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies    Comment[]   @relation("CommentReplies")
+  attachment Attachment?
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+
+  @@index([parentId])
+  @@index([createdAt])
+  @@index([userName])
+  @@index([email])
+  @@map("comments")
+}
+
+model Attachment {
+  id           String         @id @default(cuid())
+  commentId    String         @unique @map("comment_id")
+  comment      Comment        @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  type         AttachmentType
+  originalName String         @map("original_name")
+  storedName   String         @map("stored_name")
+  mimeType     String         @map("mime_type")
+  size         Int
+  width        Int?
+  height       Int?
+  createdAt    DateTime       @default(now()) @map("created_at")
+
+  @@map("attachments")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         UserRole @default(MODERATOR)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("users")
+}
