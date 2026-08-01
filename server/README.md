@@ -20,7 +20,14 @@ src/
 ├── app.module.ts
 ├── prisma/          # PrismaModule, подключение к PostgreSQL
 ├── redis/           # RedisModule
+├── cache/           # CacheService (Redis)
+├── captcha/         # CAPTCHA (svg-captcha + Redis)
+├── files/           # загрузка, очередь resize-image, GET /files/:id
+├── comments/        # CRUD, пагинация, дерево ответов, WebSocket gateway
+├── auth/            # JWT login, guard, @Public()
 └── health/          # GET /health
+
+uploads/             # вложения (не в git)
 
 prisma/
 ├── schema.prisma    # модели данных
@@ -88,11 +95,22 @@ SQL DDL для просмотра структуры таблиц — в `databa
 ### Реализовано
 
 - `GET /health` — проверка API, PostgreSQL и Redis
-- `GET /comments` — список корневых комментариев (пагинация, сортировка, дерево ответов)
+- `GET /captcha` — получение CAPTCHA (`id`, SVG `image`)
+- `GET /comments` — список корневых комментариев (пагинация, сортировка, дерево ответов, Redis cache)
 - `GET /comments/:id` — комментарий по id с вложенными ответами
-- `POST /comments` — создание корневого комментария
-- `POST /comments/:id/replies` — ответ на комментарий
+- `POST /comments` — создание корневого комментария (`multipart/form-data`, CAPTCHA, опциональный файл)
+- `POST /comments/:id/replies` — ответ на комментарий (`multipart/form-data`, CAPTCHA, опциональный файл)
 - `POST /comments/preview` — предпросмотр санитизированного HTML
+- `GET /files/:id` — отдача вложения (JPG/PNG/GIF/TXT)
+- `POST /auth/login` — вход модератора (`email`, `password`) → `{ accessToken }`
+- `DELETE /comments/:id` — удаление комментария (JWT, каскад по ответам)
+
+### WebSocket (Socket.IO)
+
+- Namespace: default (`/`)
+- `comment:created` — новый корневой комментарий
+- `comment:reply` — новый ответ на комментарий
+- Триггер: `comment.created` → очередь `comments-ws` → job `ws-broadcast`
 
 ## Скрипты
 

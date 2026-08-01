@@ -1,3 +1,5 @@
+import { AttachmentResponse } from '../files/files.types';
+
 export type CommentResponse = {
   id: string;
   userName: string;
@@ -5,6 +7,7 @@ export type CommentResponse = {
   homePage: string | null;
   text: string;
   parentId: string | null;
+  attachment: AttachmentResponse | null;
   createdAt: Date;
   updatedAt: Date;
   replies: CommentResponse[];

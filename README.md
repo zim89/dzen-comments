@@ -116,8 +116,21 @@ docker compose up --build
 ## API
 
 - `GET /health` — состояние сервиса
+- `GET /captcha` — CAPTCHA для формы (`id`, `image`)
 - `GET /comments` — список корневых комментариев (`?page=1&limit=25&sortField=createdAt&sortOrder=desc`)
 - `GET /comments/:id` — один комментарий с деревом ответов
-- `POST /comments` — создать комментарий
-- `POST /comments/:id/replies` — ответить на комментарий
+- `POST /comments` — создать комментарий (`multipart/form-data`: поля + опциональный файл; `captchaId`, `captchaValue`)
+- `POST /comments/:id/replies` — ответить на комментарий (`multipart/form-data`, CAPTCHA)
 - `POST /comments/preview` — предпросмотр текста (XSS-safe HTML)
+- `GET /files/:id` — скачать вложение (изображение или TXT)
+- `POST /auth/login` — вход модератора (`email`, `password`) → `{ accessToken }`
+- `DELETE /comments/:id` — удалить комментарий (только с JWT, `Authorization: Bearer <token>`)
+
+### WebSocket (Socket.IO)
+
+Подключение: `ws://localhost:4040` (тот же порт, что и API).
+
+События от сервера:
+
+- `comment:created` — новый корневой комментарий (`CommentResponse`)
+- `comment:reply` — новый ответ (`CommentResponse` с `parentId`)

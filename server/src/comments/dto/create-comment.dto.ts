@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -24,6 +25,9 @@ export class CreateCommentDto {
   email!: string;
 
   @IsOptional()
+  @Transform(({ value }: { value: unknown }) =>
+    value === '' ? undefined : value,
+  )
   @IsUrl()
   @MaxLength(2048)
   homePage?: string;
@@ -32,4 +36,13 @@ export class CreateCommentDto {
   @IsNotEmpty()
   @MaxLength(10000)
   text!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  captchaId!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(20)
+  captchaValue!: string;
 }
