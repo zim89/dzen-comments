@@ -116,3 +116,8 @@ docker compose up --build
 ## API
 
 - `GET /health` — состояние сервиса
+- `GET /comments` — список корневых комментариев (`?page=1&limit=25&sortField=createdAt&sortOrder=desc`)
+- `GET /comments/:id` — один комментарий с деревом ответов
+- `POST /comments` — создать комментарий
+- `POST /comments/:id/replies` — ответить на комментарий
+- `POST /comments/preview` — предпросмотр текста (XSS-safe HTML)
