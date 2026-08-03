@@ -3,6 +3,14 @@ import { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { fetchCaptcha, fetchComments } from '@/api/comments';
 
+function socketUrl(): string {
+  const apiBase = import.meta.env.VITE_API_URL;
+  if (apiBase) {
+    return apiBase.replace(/\/$/, '');
+  }
+  return window.location.origin;
+}
+
 export const COMMENTS_QUERY_KEY = ['comments'] as const;
 
 const WS_EVENT_COMMENT_CREATED = 'comment:created';
@@ -18,7 +26,7 @@ export function useCommentsSocket() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const socket = io(window.location.origin, {
+    const socket = io(socketUrl(), {
       path: '/socket.io',
       transports: ['websocket', 'polling'],
       reconnection: true,

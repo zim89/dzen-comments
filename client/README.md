@@ -13,11 +13,13 @@ React + Vite + shadcn/ui + TanStack Query.
 
 ## Запуск
 
-**Важно:** клиент проксирует `/api` → `http://localhost:4040`. Без запущенного API запросы вернут 500.
+**Важно:** в dev-клиенте `/api` и `/socket.io` проксируются на `http://localhost:4040`. Без API запросы вернут ошибку.
+
+### Локальная разработка
 
 1. Инфраструктура:
 ```bash
-docker compose up -d
+docker compose up -d postgres redis
 ```
 
 2. API (`server/`):
@@ -34,6 +36,16 @@ cd client
 npm install
 npm run dev            # http://localhost:5173
 ```
+
+### Docker (полный стек)
+
+Из корня репозитория:
+
+```bash
+docker compose up --build -d
+```
+
+Приложение: http://localhost:8080 (nginx проксирует `/api` и `/socket.io` на контейнер `api`).
 
 ## Сборка
 

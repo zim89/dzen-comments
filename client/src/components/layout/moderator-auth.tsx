@@ -36,7 +36,7 @@ export function ModeratorAuth() {
     return (
       <Button variant="outline" size="sm" onClick={logout}>
         <LogOut />
-        Выйти
+        Sign out
       </Button>
     );
   }
@@ -46,14 +46,14 @@ export function ModeratorAuth() {
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           <LogIn />
-          Модератор
+          Moderator
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Вход модератора</DialogTitle>
+          <DialogTitle>Moderator sign in</DialogTitle>
           <DialogDescription>
-            Авторизуйтесь для удаления комментариев.
+            Sign in to delete comments.
           </DialogDescription>
         </DialogHeader>
 
@@ -61,10 +61,10 @@ export function ModeratorAuth() {
           className="space-y-4"
           onSubmit={form.handleSubmit((values) =>
             loginMutation.mutate(values, {
-              onSuccess: () => toast.success('Вы вошли как модератор'),
+              onSuccess: () => toast.success('Signed in as moderator'),
               onError: (error) =>
                 toast.error(
-                  error instanceof ApiError ? error.message : 'Ошибка входа',
+                  error instanceof ApiError ? error.message : 'Sign in failed',
                 ),
             }),
           )}
@@ -95,7 +95,7 @@ export function ModeratorAuth() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="moderator-password">Пароль</FieldLabel>
+                  <FieldLabel htmlFor="moderator-password">Password</FieldLabel>
                   <Input
                     {...field}
                     id="moderator-password"
@@ -113,7 +113,7 @@ export function ModeratorAuth() {
 
           <Button type="submit" disabled={loginMutation.isPending}>
             {loginMutation.isPending && <Loader2 className="animate-spin" />}
-            Войти
+            Sign in
           </Button>
         </form>
       </DialogContent>

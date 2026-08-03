@@ -9,6 +9,8 @@ const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 const MODERATOR_EMAIL = process.env.MODERATOR_EMAIL ?? 'moderator@example.com';
 const MODERATOR_PASSWORD = process.env.MODERATOR_PASSWORD ?? 'moderator123';
 
+const ROOT_COMMENT_COUNT = 30;
+
 async function main(): Promise<void> {
   const passwordHash = await bcrypt.hash(MODERATOR_PASSWORD, 10);
 
@@ -28,60 +30,65 @@ async function main(): Promise<void> {
     return;
   }
 
-  const rootOne = await prisma.comment.create({
-    data: {
-      userName: 'alice',
-      email: 'alice@example.com',
-      homePage: 'https://example.com/alice',
-      text: 'First root comment with <strong>allowed</strong> HTML.',
-    },
+  const now = Date.now();
+
+  for (let i = 1; i <= ROOT_COMMENT_COUNT; i += 1) {
+    const padded = String(i).padStart(2, '0');
+    await prisma.comment.create({
+      data: {
+        userName: `user${padded}`,
+        email: `user${padded}@example.com`,
+        homePage: i % 3 === 0 ? `https://example.com/user${padded}` : null,
+        text: `Seed root comment #${i} for pagination and sorting demo.`,
+        createdAt: new Date(now - i * 60_000),
+        updatedAt: new Date(now - i * 60_000),
+      },
+    });
+  }
+
+  const firstRoot = await prisma.comment.findFirst({
+    where: { parentId: null },
+    orderBy: { createdAt: 'desc' },
   });
 
-  const replyOne = await prisma.comment.create({
-    data: {
-      userName: 'bob',
-      email: 'bob@example.com',
-      text: 'Reply to the first comment.',
-      parentId: rootOne.id,
-    },
-  });
+  if (firstRoot) {
+    const replyOne = await prisma.comment.create({
+      data: {
+        userName: 'bob',
+        email: 'bob@example.com',
+        text: 'Reply to the newest root comment (cascade demo).',
+        parentId: firstRoot.id,
+        createdAt: new Date(now - 30_000),
+        updatedAt: new Date(now - 30_000),
+      },
+    });
 
-  await prisma.comment.create({
-    data: {
-      userName: 'carol',
-      email: 'carol@example.com',
-      text: 'Nested reply to bob.',
-      parentId: replyOne.id,
-    },
-  });
+    await prisma.comment.create({
+      data: {
+        userName: 'carol',
+        email: 'carol@example.com',
+        text: 'Nested reply to bob (second level).',
+        parentId: replyOne.id,
+        createdAt: new Date(now - 15_000),
+        updatedAt: new Date(now - 15_000),
+      },
+    });
 
-  await prisma.comment.create({
-    data: {
-      userName: 'dave',
-      email: 'dave@example.com',
-      text: 'Another reply on the first thread.',
-      parentId: rootOne.id,
-    },
-  });
+    await prisma.comment.create({
+      data: {
+        userName: 'dave',
+        email: 'dave@example.com',
+        text: 'Another reply on the first thread.',
+        parentId: firstRoot.id,
+        createdAt: new Date(now - 10_000),
+        updatedAt: new Date(now - 10_000),
+      },
+    });
+  }
 
-  await prisma.comment.create({
-    data: {
-      userName: 'eve',
-      email: 'eve@example.com',
-      homePage: 'https://example.com/eve',
-      text: 'Second root comment for sorting and pagination tests.',
-    },
-  });
-
-  await prisma.comment.create({
-    data: {
-      userName: 'frank',
-      email: 'frank@example.com',
-      text: 'Third root comment (LIFO default check).',
-    },
-  });
-
-  console.log('Seed completed.');
+  console.log(
+    `Seed completed: ${ROOT_COMMENT_COUNT} root comments + nested replies.`,
+  );
   console.log(`Moderator: ${MODERATOR_EMAIL}`);
 }
 

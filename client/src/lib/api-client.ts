@@ -21,7 +21,7 @@ async function parseError(response: Response): Promise<string> {
   }
 
   if (response.status >= 500) {
-    return 'API недоступен. Запустите сервер: cd server && npm run start:dev';
+    return 'API unavailable. Start the server: cd server && npm run start:dev';
   }
 
   return response.statusText || 'Request failed';
@@ -44,7 +44,7 @@ export async function apiFetch<T>(
     });
   } catch {
     throw new ApiError(
-      'Не удалось подключиться к API. Запустите server (npm run start:dev) и docker compose up -d',
+      'Could not connect to the API. Start the server (npm run start:dev) and docker compose up -d',
       0,
     );
   }
@@ -76,7 +76,7 @@ export async function apiFormData<T>(
     });
   } catch {
     throw new ApiError(
-      'Не удалось подключиться к API. Запустите server (npm run start:dev) и docker compose up -d',
+      'Could not connect to the API. Start the server (npm run start:dev) and docker compose up -d',
       0,
     );
   }

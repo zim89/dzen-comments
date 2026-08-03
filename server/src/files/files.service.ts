@@ -15,22 +15,17 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { InjectQueue } from '@nestjs/bullmq';
 import { Attachment, AttachmentType } from '@prisma/client';
-import { Queue } from 'bullmq';
 import sharp from 'sharp';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   ALLOWED_IMAGE_MIME_TYPES,
   ALLOWED_TEXT_MIME_TYPES,
-  FILES_QUEUE,
   IMAGE_MAX_HEIGHT,
   IMAGE_MAX_WIDTH,
   MAX_UPLOAD_BYTES,
-  RESIZE_IMAGE_JOB,
   TEXT_MAX_BYTES,
   UPLOADS_DIR,
-  type ResizeImageJobData,
 } from './files.constants';
 import {
   FILE_PROCESSED_EVENT,
@@ -46,7 +41,6 @@ export class FilesService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2,
-    @InjectQueue(FILES_QUEUE) private readonly filesQueue: Queue,
   ) {}
 
   onModuleInit(): void {
@@ -80,16 +74,15 @@ export class FilesService implements OnModuleInit {
       },
     });
 
-    if (type === AttachmentType.IMAGE) {
-      await this.filesQueue.add(RESIZE_IMAGE_JOB, {
-        attachmentId: attachment.id,
-      } satisfies ResizeImageJobData);
-    }
+    const saved =
+      type === AttachmentType.IMAGE
+        ? await this.resizeImage(attachment.id)
+        : attachment;
 
-    return this.toAttachmentResponse(attachment);
+    return this.toAttachmentResponse(saved);
   }
 
-  async resizeImage(attachmentId: string): Promise<void> {
+  async resizeImage(attachmentId: string): Promise<Attachment> {
     const attachment = await this.prisma.attachment.findUnique({
       where: { id: attachmentId },
     });
@@ -98,7 +91,9 @@ export class FilesService implements OnModuleInit {
       this.logger.warn(
         `Skip resize: attachment ${attachmentId} not found or not image`,
       );
-      return;
+      throw new NotFoundException(
+        `Image attachment "${attachmentId}" not found`,
+      );
     }
 
     const filePath = join(this.uploadsPath, attachment.storedName);
@@ -131,6 +126,8 @@ export class FilesService implements OnModuleInit {
     this.logger.log(
       `Image resized: ${attachmentId} (${metadata.width ?? '?'}x${metadata.height ?? '?'} → ${updated.width}x${updated.height})`,
     );
+
+    return updated;
   }
 
   async getAttachmentFile(id: string): Promise<{

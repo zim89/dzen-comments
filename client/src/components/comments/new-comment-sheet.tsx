@@ -19,14 +19,14 @@ export function NewCommentSheet() {
       <SheetTrigger asChild>
         <Button>
           <Plus />
-          Новый комментарий
+          New comment
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="overflow-y-auto sm:max-w-xl">
         <SheetHeader>
-          <SheetTitle>Новый комментарий</SheetTitle>
+          <SheetTitle>New comment</SheetTitle>
           <SheetDescription>
-            Заполните форму. Поддерживаются теги i, strong, code, a.
+            Fill out the form. Supported tags: i, strong, code, a.
           </SheetDescription>
         </SheetHeader>
         {open && (
