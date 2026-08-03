@@ -62,7 +62,7 @@ export function FileUploadPreview({ file, onClear }: FileUploadPreviewProps) {
             size='icon'
             className='size-7'
             onClick={onClear}
-            title='Удалить файл'
+            title='Remove file'
           >
             <X className='size-4' />
           </Button>
@@ -102,7 +102,7 @@ export function FileUploadPreview({ file, onClear }: FileUploadPreviewProps) {
         <div className='flex gap-3 rounded-md border bg-background p-3'>
           <FileText className='mt-0.5 size-5 shrink-0 text-muted-foreground' />
           <pre className='max-h-32 overflow-auto whitespace-pre-wrap wrap-break-word text-xs text-muted-foreground'>
-            {textPreview ?? 'Загрузка...'}
+            {textPreview ?? 'Loading...'}
           </pre>
         </div>
       )}

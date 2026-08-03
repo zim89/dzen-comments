@@ -31,6 +31,52 @@ services:
       timeout: 5s
       retries: 5
 
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: comments-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://comments:comments@postgres:5432/comments
+      REDIS_URL: redis://redis:6379
+      PORT: 4040
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      MODERATOR_EMAIL: ${MODERATOR_EMAIL:-moderator@example.com}
+      MODERATOR_PASSWORD: ${MODERATOR_PASSWORD:-moderator123}
+      RUN_SEED: ${RUN_SEED:-true}
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "fetch(''http://localhost:4040/health'').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: comments-client
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   redis_data:
+  uploads_data:

@@ -16,9 +16,9 @@ export function AppHeader() {
     <header className='sticky top-0 z-50 border-b bg-card/60 backdrop-blur'>
       <div className='mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4'>
         <div>
-          <h1 className='text-2xl font-bold tracking-tight'>Комментарии</h1>
+          <h1 className='text-2xl font-bold tracking-tight'>Comments</h1>
           <p className='text-sm text-muted-foreground'>
-            SPA с WebSocket, CAPTCHA и вложениями
+            SPA with WebSocket, CAPTCHA, and attachments
           </p>
         </div>
 
@@ -27,7 +27,7 @@ export function AppHeader() {
             variant='ghost'
             size='icon'
             onClick={() => setDark((value) => !value)}
-            title='Переключить тему'
+            title='Toggle theme'
           >
             {dark ? <Sun /> : <Moon />}
           </Button>

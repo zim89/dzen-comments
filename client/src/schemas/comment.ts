@@ -5,37 +5,42 @@ const userNameRegex = /^[a-zA-Z0-9]+$/;
 export const commentFormSchema = z.object({
   userName: z
     .string()
-    .min(1, 'Имя обязательно')
-    .max(100, 'Не более 100 символов')
-    .regex(userNameRegex, 'Только латиница и цифры'),
+    .transform((val) => val.trim())
+    .pipe(
+      z
+        .string()
+        .min(1, 'Username is required')
+        .max(100, 'Must be at most 100 characters')
+        .regex(userNameRegex, 'Latin letters and digits only'),
+    ),
   email: z
     .string()
-    .min(1, 'Email обязателен')
-    .email('Некорректный email')
-    .max(255, 'Не более 255 символов'),
+    .min(1, 'Email is required')
+    .email('Invalid email')
+    .max(255, 'Must be at most 255 characters'),
   homePage: z
     .string()
-    .max(2048, 'Не более 2048 символов')
+    .max(2048, 'Must be at most 2048 characters')
     .optional()
     .or(z.literal(''))
     .refine((val) => !val || z.string().url().safeParse(val).success, {
-      message: 'Некорректный URL',
+      message: 'Invalid URL',
     }),
   text: z
     .string()
-    .min(1, 'Текст обязателен')
-    .max(10000, 'Не более 10000 символов'),
+    .min(1, 'Text is required')
+    .max(10000, 'Must be at most 10000 characters'),
   captchaValue: z
     .string()
-    .min(1, 'Введите CAPTCHA')
-    .max(20, 'Не более 20 символов'),
+    .min(1, 'Enter CAPTCHA')
+    .max(20, 'Must be at most 20 characters'),
 });
 
 export type CommentFormValues = z.infer<typeof commentFormSchema>;
 
 export const loginFormSchema = z.object({
-  email: z.string().min(1, 'Email обязателен').email('Некорректный email'),
-  password: z.string().min(1, 'Пароль обязателен'),
+  email: z.string().min(1, 'Email is required').email('Invalid email'),
+  password: z.string().min(1, 'Password is required'),
 });
 
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
@@ -55,6 +60,6 @@ export function getMaxFileSize(mimeType: string): number {
 }
 
 export function formatMaxFileSize(bytes: number): string {
-  if (bytes >= 1024 * 1024) return `${bytes / (1024 * 1024)} МБ`;
-  return `${bytes / 1024} КБ`;
+  if (bytes >= 1024 * 1024) return `${bytes / (1024 * 1024)} MB`;
+  return `${bytes / 1024} KB`;
 }

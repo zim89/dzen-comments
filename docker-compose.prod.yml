@@ -1,0 +1,20 @@
+# Production overrides for VDS deploy.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+services:
+  postgres:
+    ports: !reset []
+
+  redis:
+    ports: !reset []
+
+  api:
+    ports: !reset []
+    env_file:
+      - .env
+    environment:
+      RUN_SEED: ${RUN_SEED:-false}
+
+  client:
+    ports:
+      - '80:80'

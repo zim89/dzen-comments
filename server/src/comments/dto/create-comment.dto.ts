@@ -12,6 +12,9 @@ import {
 const USER_NAME_PATTERN = /^[a-zA-Z0-9]+$/;
 
 export class CreateCommentDto {
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)

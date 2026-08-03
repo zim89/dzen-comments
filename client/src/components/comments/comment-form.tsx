@@ -80,14 +80,14 @@ export function CommentForm({
     mutationFn: (text: string) => previewComment(text),
     onSuccess: (data) => setPreviewHtml(data.html),
     onError: (error: Error) => {
-      toast.error(error instanceof ApiError ? error.message : 'Ошибка предпросмотра');
+      toast.error(error instanceof ApiError ? error.message : 'Preview failed');
     },
   });
 
   const submitMutation = useMutation({
     mutationFn: async (values: CommentFormValues) => {
       if (!captcha?.id) {
-        throw new Error('CAPTCHA не загружена');
+        throw new Error('CAPTCHA not loaded');
       }
       if (parentId) {
         return createReply(parentId, values, captcha.id, file);
@@ -95,7 +95,7 @@ export function CommentForm({
       return createComment(values, captcha.id, file);
     },
     onSuccess: async () => {
-      toast.success(parentId ? 'Ответ добавлен' : 'Комментарий добавлен');
+      toast.success(parentId ? 'Reply added' : 'Comment added');
       form.reset(defaultValues);
       setFile(null);
       if (fileInputRef.current) {
@@ -107,7 +107,7 @@ export function CommentForm({
       onSuccess?.();
     },
     onError: (error: Error) => {
-      toast.error(error instanceof ApiError ? error.message : 'Ошибка отправки');
+      toast.error(error instanceof ApiError ? error.message : 'Submit failed');
       void refetchCaptcha();
       form.setValue('captchaValue', '');
     },
@@ -119,12 +119,12 @@ export function CommentForm({
       return;
     }
     if (!ALLOWED_FILE_TYPES.includes(next.type as (typeof ALLOWED_FILE_TYPES)[number])) {
-      toast.error('Допустимы JPG, PNG, GIF и TXT');
+      toast.error('Allowed types: JPG, PNG, GIF, and TXT');
       return;
     }
     const maxSize = getMaxFileSize(next.type);
     if (next.size > maxSize) {
-      toast.error(`Файл не должен превышать ${formatMaxFileSize(maxSize)}`);
+      toast.error(`File must not exceed ${formatMaxFileSize(maxSize)}`);
       return;
     }
     setFile(next);
@@ -150,7 +150,7 @@ export function CommentForm({
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={`${parentId ?? 'root'}-userName`}>
-                  Имя пользователя
+                  Username
                 </FieldLabel>
                 <Input
                   {...field}
@@ -159,7 +159,7 @@ export function CommentForm({
                   autoComplete="username"
                   aria-invalid={fieldState.invalid}
                 />
-                <FieldDescription>Латиница и цифры</FieldDescription>
+                <FieldDescription>Latin letters and digits</FieldDescription>
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
@@ -191,7 +191,7 @@ export function CommentForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={`${parentId ?? 'root'}-homePage`}>
-                Домашняя страница
+                Home page
               </FieldLabel>
               <Input
                 {...field}
@@ -200,7 +200,7 @@ export function CommentForm({
                 placeholder="https://example.com"
                 aria-invalid={fieldState.invalid}
               />
-              <FieldDescription>Необязательно</FieldDescription>
+              <FieldDescription>Optional</FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -211,7 +211,7 @@ export function CommentForm({
           control={form.control}
           render={({ field: { ref, ...field }, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={`${parentId ?? 'root'}-text`}>Текст</FieldLabel>
+              <FieldLabel htmlFor={`${parentId ?? 'root'}-text`}>Text</FieldLabel>
               <HtmlToolbar
                 textareaRef={textareaRef}
                 value={field.value}
@@ -224,7 +224,7 @@ export function CommentForm({
                   textareaRef.current = el;
                 }}
                 id={`${parentId ?? 'root'}-text`}
-                placeholder="Ваш комментарий..."
+                placeholder="Your comment..."
                 aria-invalid={fieldState.invalid}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -233,7 +233,7 @@ export function CommentForm({
         />
 
         <Field>
-          <FieldLabel htmlFor={`${parentId ?? 'root'}-file`}>Вложение</FieldLabel>
+          <FieldLabel htmlFor={`${parentId ?? 'root'}-file`}>Attachment</FieldLabel>
           <Input
             ref={fileInputRef}
             id={`${parentId ?? 'root'}-file`}
@@ -242,7 +242,7 @@ export function CommentForm({
             onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
           />
           <FieldDescription>
-            JPG, PNG, GIF до {formatMaxFileSize(MAX_IMAGE_SIZE)}, TXT до{' '}
+            JPG, PNG, GIF up to {formatMaxFileSize(MAX_IMAGE_SIZE)}, TXT up to{' '}
             {formatMaxFileSize(MAX_TEXT_FILE_SIZE)}
           </FieldDescription>
           {file && <FileUploadPreview file={file} onClear={clearFile} />}
@@ -259,7 +259,7 @@ export function CommentForm({
                   <div
                     className="flex min-h-16 min-w-40 items-center justify-center rounded-md border bg-muted p-2"
                     dangerouslySetInnerHTML={{
-                      __html: captcha?.image ?? '<span>Загрузка...</span>',
+                      __html: captcha?.image ?? '<span>Loading...</span>',
                     }}
                   />
                   <Button
@@ -268,7 +268,7 @@ export function CommentForm({
                     size="icon"
                     onClick={() => void refetchCaptcha()}
                     disabled={captchaLoading}
-                    title="Обновить CAPTCHA"
+                    title="Refresh CAPTCHA"
                   >
                     <RefreshCw className={captchaLoading ? 'animate-spin' : ''} />
                   </Button>
@@ -276,7 +276,7 @@ export function CommentForm({
                 <Input
                   {...field}
                   id={`${parentId ?? 'root'}-captcha`}
-                  placeholder="Введите символы"
+                  placeholder="Enter characters"
                   autoComplete="off"
                   aria-invalid={fieldState.invalid}
                 />
@@ -289,7 +289,7 @@ export function CommentForm({
 
       {previewHtml !== null && (
         <div className="rounded-md border bg-muted/40 p-4">
-          <p className="mb-2 text-sm font-medium">Предпросмотр</p>
+          <p className="mb-2 text-sm font-medium">Preview</p>
           <div
             className="prose prose-sm max-w-none dark:prose-invert [&_a]:text-primary [&_code]:rounded [&_code]:bg-muted [&_code]:px-1"
             dangerouslySetInnerHTML={{ __html: previewHtml }}
@@ -305,7 +305,7 @@ export function CommentForm({
           onClick={() => {
             const text = form.getValues('text');
             if (!text.trim()) {
-              toast.error('Введите текст для предпросмотра');
+              toast.error('Enter text to preview');
               return;
             }
             previewMutation.mutate(text);
@@ -320,7 +320,7 @@ export function CommentForm({
         </Button>
         <Button type="submit" disabled={submitMutation.isPending}>
           {submitMutation.isPending && <Loader2 className="animate-spin" />}
-          {parentId ? 'Ответить' : 'Отправить'}
+          {parentId ? 'Reply' : 'Submit'}
         </Button>
       </div>
     </form>
@@ -333,9 +333,9 @@ export function CommentForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Новый комментарий</CardTitle>
+        <CardTitle>New comment</CardTitle>
         <CardDescription>
-          Заполните форму. Поддерживаются теги i, strong, code, a.
+          Fill out the form. Supported tags: i, strong, code, a.
         </CardDescription>
       </CardHeader>
       <CardContent>{content}</CardContent>

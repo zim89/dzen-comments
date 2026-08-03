@@ -31,16 +31,16 @@ export function CommentItem({ comment, depth = 0 }: CommentItemProps) {
 
   const deleteMutation = useMutation({
     mutationFn: () => {
-      if (!token) throw new Error('Требуется авторизация');
+      if (!token) throw new Error('Authentication required');
       return deleteComment(comment.id, token);
     },
     onSuccess: () => {
-      toast.success('Комментарий удалён');
+      toast.success('Comment deleted');
       void invalidateComments(queryClient);
     },
     onError: (error: Error) => {
       toast.error(
-        error instanceof ApiError ? error.message : 'Ошибка удаления'
+        error instanceof ApiError ? error.message : 'Delete failed'
       );
     },
   });
@@ -87,7 +87,7 @@ export function CommentItem({ comment, depth = 0 }: CommentItemProps) {
                 ) : (
                   <Trash2 />
                 )}
-                Удалить
+                Delete
               </Button>
             )}
           </div>
@@ -110,7 +110,7 @@ export function CommentItem({ comment, depth = 0 }: CommentItemProps) {
             >
               {replyOpen ? <ChevronUp /> : <ChevronDown />}
               <MessageSquareReply />
-              Ответить
+              Reply
             </Button>
           </div>
 

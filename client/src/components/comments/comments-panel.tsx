@@ -42,7 +42,7 @@ export function CommentsPanel({
     return (
       <div className="flex items-center justify-center py-16 text-muted-foreground">
         <Loader2 className="mr-2 animate-spin" />
-        Загрузка комментариев...
+        Loading comments...
       </div>
     );
   }
@@ -50,7 +50,7 @@ export function CommentsPanel({
   if (isError) {
     return (
       <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">
-        {(error as Error).message || 'Не удалось загрузить комментарии'}
+        {(error as Error).message || 'Failed to load comments'}
       </div>
     );
   }
@@ -63,19 +63,19 @@ export function CommentsPanel({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-semibold">Комментарии</h2>
+            <h2 className="text-xl font-semibold">Comments</h2>
             {isFetching && (
               <Loader2 className="size-4 animate-spin text-muted-foreground" />
             )}
           </div>
           <p className="text-sm text-muted-foreground">
-            {meta?.total ?? 0} записей, по {LIMIT} на страницу
+            {meta?.total ?? 0} entries, {LIMIT} per page
           </p>
         </div>
 
         <div className="flex flex-wrap gap-3">
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">Сортировка</p>
+            <p className="text-xs text-muted-foreground">Sort by</p>
             <Select
               value={sortField}
               onValueChange={(value) =>
@@ -86,15 +86,15 @@ export function CommentsPanel({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="createdAt">Дата</SelectItem>
-                <SelectItem value="userName">Имя</SelectItem>
+                <SelectItem value="createdAt">Date</SelectItem>
+                <SelectItem value="userName">Name</SelectItem>
                 <SelectItem value="email">Email</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">Порядок</p>
+            <p className="text-xs text-muted-foreground">Order</p>
             <Select
               value={sortOrder}
               onValueChange={(value) =>
@@ -105,8 +105,8 @@ export function CommentsPanel({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="desc">LIFO / Убыв.</SelectItem>
-                <SelectItem value="asc">FIFO / Возр.</SelectItem>
+                <SelectItem value="desc">LIFO / Desc</SelectItem>
+                <SelectItem value="asc">FIFO / Asc</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -115,7 +115,7 @@ export function CommentsPanel({
 
       {comments.length === 0 ? (
         <div className="rounded-lg border border-dashed p-10 text-center text-muted-foreground">
-          Пока нет комментариев. Будьте первым!
+          No comments yet. Be the first!
         </div>
       ) : (
         <div
@@ -133,7 +133,7 @@ export function CommentsPanel({
       {meta && meta.totalPages > 1 && (
         <div className="flex items-center justify-between gap-4 border-t pt-4">
           <p className="text-sm text-muted-foreground">
-            Страница {meta.page} из {meta.totalPages}
+            Page {meta.page} of {meta.totalPages}
           </p>
           <div className="flex gap-2">
             <Button
@@ -143,7 +143,7 @@ export function CommentsPanel({
               onClick={() => onPageChange(page - 1)}
             >
               <ChevronLeft />
-              Назад
+              Previous
             </Button>
             <Button
               variant="outline"
@@ -151,7 +151,7 @@ export function CommentsPanel({
               disabled={page >= meta.totalPages}
               onClick={() => onPageChange(page + 1)}
             >
-              Вперёд
+              Next
               <ChevronRight />
             </Button>
           </div>

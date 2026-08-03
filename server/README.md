@@ -56,8 +56,10 @@ cp .env.example .env
 Перед запуском API подними инфраструктуру из корня репозитория:
 
 ```bash
-docker compose up -d
+docker compose up -d postgres redis
 ```
+
+Или весь стек в Docker (см. [корневой README](../README.md#запуск-в-docker-полный-стек)).
 
 ## Установка и запуск
 
@@ -77,6 +79,10 @@ API: http://localhost:4040
 npm run build
 npm run start:prod
 ```
+
+### Docker
+
+Образ собирается из `server/Dockerfile`. При старте контейнера entrypoint выполняет `prisma migrate deploy` и (по умолчанию) `prisma db seed`. Вложения хранятся в volume `uploads_data` (`/app/uploads`).
 
 ## Prisma
 
