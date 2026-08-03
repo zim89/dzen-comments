@@ -6,12 +6,15 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs', 'prisma.config.ts', 'prisma/seed.ts'],
+    ignores: ['eslint.config.mjs', 'prisma.config.ts', 'prisma/seed.ts', 'dist/**'],
   },
-  eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
   {
+    files: ['src/**/*.ts'],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommendedTypeChecked,
+      eslintPluginPrettierRecommended,
+    ],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -23,13 +26,22 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
     },
-  },
-  {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
-      "prettier/prettier": ["error", { endOfLine: "auto" }],
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
+    },
+  },
+  {
+    files: ['scripts/**/*.mjs'],
+    extends: [eslint.configs.recommended, eslintPluginPrettierRecommended],
+    languageOptions: {
+      globals: globals.node,
+      sourceType: 'module',
+    },
+    rules: {
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
   },
 );

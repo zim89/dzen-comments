@@ -234,7 +234,7 @@ export class CommentsService {
   > {
     const replies = await this.prisma.comment.findMany({
       where: { parentId: { not: null } },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: 'desc' },
       include: { attachment: true },
     });
 

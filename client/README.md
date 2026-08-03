@@ -1,5 +1,54 @@
-# Client
+# Client — SPA «Комментарии»
 
-SPA «Комментарии» — фронтенд (React).
+React + Vite + shadcn/ui + TanStack Query.
 
-Пока не реализован. API: `../server/`.
+## Стек
+
+- React 19 + TypeScript + Vite
+- shadcn/ui (Radix UI)
+- react-hook-form + Zod
+- TanStack Query
+- Sonner (toast)
+- socket.io-client (live-обновления)
+
+## Запуск
+
+**Важно:** клиент проксирует `/api` → `http://localhost:4040`. Без запущенного API запросы вернут 500.
+
+1. Инфраструктура:
+```bash
+docker compose up -d
+```
+
+2. API (`server/`):
+```bash
+cd server
+cp .env.example .env   # если ещё нет
+npm install
+npm run start:dev      # слушает :4040
+```
+
+3. Клиент:
+```bash
+cd client
+npm install
+npm run dev            # http://localhost:5173
+```
+
+## Сборка
+
+```bash
+npm run build
+npm run preview
+```
+
+## Функции
+
+- Список комментариев: пагинация (25), сортировка (userName, email, createdAt)
+- Каскадные ответы (дерево)
+- Форма: userName, email, homePage, text, CAPTCHA, файл (JPG/PNG/GIF/TXT)
+- Preview (`POST /comments/preview`)
+- Панель тегов `[i][strong][code][a]`
+- WebSocket: live-обновление при `comment:created` / `comment:reply`
+- Вход модератора (JWT) и удаление комментариев
+- Lightbox для изображений
