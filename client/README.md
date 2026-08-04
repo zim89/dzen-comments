@@ -2,6 +2,13 @@
 
 React + Vite + shadcn/ui + TanStack Query.
 
+## Демо
+
+- **Продакшен:** https://spa-comments.vercel.app
+- **API:** https://spa-comments-api.onrender.com
+
+На Vercel при сборке задаётся `VITE_API_URL=https://spa-comments-api.onrender.com` (без `/api` в конце).
+
 ## Стек
 
 - React 19 + TypeScript + Vite
@@ -46,6 +53,8 @@ docker compose up --build -d
 ```
 
 Приложение: http://localhost:8080 (nginx проксирует `/api` и `/socket.io` на контейнер `api`).
+
+Удобно для полного локального тестирования без внешних сервисов.
 
 ## Сборка
 

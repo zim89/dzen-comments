@@ -4,6 +4,15 @@ Backend для SPA «Комментарии»: NestJS-приложение с RE
 
 Общее описание проекта и запуск всего стека — в [README](../README.md) в корне репозитория.
 
+## Демо (продакшен)
+
+- **API:** https://spa-comments-api.onrender.com
+- **Health:** https://spa-comments-api.onrender.com/health
+
+Деплой на Render (Docker): PostgreSQL и Redis — отдельные managed-сервисы в том же проекте. Env `CLIENT_URL` — origin клиента на Vercel (`https://spa-comments.vercel.app`) для CORS.
+
+Локально весь стек: `docker compose up --build -d` из корня репозитория.
+
 ## Стек
 
 - NestJS 11
@@ -52,6 +61,7 @@ cp .env.example .env
 - `PORT` — порт API (по умолчанию 4040)
 - `JWT_SECRET`, `JWT_EXPIRES_IN` — для модератора
 - `MODERATOR_EMAIL`, `MODERATOR_PASSWORD` — учётные данные модератора для seed
+- `CLIENT_URL` — origin клиента для CORS (продакшен на Vercel; несколько URL через запятую)
 
 Перед запуском API подними инфраструктуру из корня репозитория:
 

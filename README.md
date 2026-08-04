@@ -4,9 +4,24 @@ SPA-приложение для публикации и просмотра ко�
 
 ## Демо
 
-> URL будет добавлен после деплоя на VDS (фаза в работе, merge через PR `feature/deploy-vds`).
+**Продакшен:**
 
-Локально: http://localhost:5173 (клиент) + http://localhost:4040 (API).
+- Приложение: https://spa-comments.vercel.app
+- API: https://spa-comments-api.onrender.com
+- Health: https://spa-comments-api.onrender.com/health
+
+Клиент на Vercel, бэкенд (PostgreSQL, Redis, NestJS) на Render.
+
+**Локально (полный стек в Docker):**
+
+```bash
+docker compose up --build -d
+```
+
+- Приложение: http://localhost:8080
+- API через nginx: http://localhost:8080/api/health
+
+Подробнее — раздел [Запуск в Docker](#запуск-в-docker-полный-стек).
 
 ## Возможности
 
@@ -73,14 +88,11 @@ SPA-приложение для публикации и просмотра ко�
 
 Основная разработка велась в `main` с поэтапными коммитами (инфраструктура → backend → frontend).
 
-Финальные задачи сдачи — через feature-ветки и Pull Request:
-
-- `feature/docker-full-stack` — Dockerfile, полный `docker compose` (API + client) — **текущая ветка**
-- `feature/deploy-vds` — деплой на VDS, публичный URL, HTTPS
+Крупные этапы — через feature-ветки и Pull Request (Docker, деплой).
 
 ## Запуск в Docker (полный стек)
 
-Поднимает PostgreSQL, Redis, API и клиент (nginx) без ручного `npm run`:
+Рекомендуемый способ **локально протестировать весь проект** (PostgreSQL, Redis, API, клиент) без Render/Vercel:
 
 ```bash
 docker compose up --build -d
@@ -233,8 +245,9 @@ node scripts/test-queues.mjs
 - `comment:created` — новый корневой комментарий
 - `comment:reply` — новый ответ
 
-## Деплой (VDS)
+## Деплой (продакшен)
 
-> В разработке — PR `feature/deploy-vds`.
+- **Клиент:** [Vercel](https://vercel.com) — статическая сборка Vite (`client/`), env `VITE_API_URL` указывает на API.
+- **API, PostgreSQL, Redis:** [Render](https://render.com) — Web Service (Docker из `server/`), managed Postgres и Key Value (Redis).
 
-Планируется: Oracle Cloud Free (или аналог) + Docker + nginx + HTTPS. URL демо будет указан в этом README после деплоя.
+Альтернатива для self-hosted: один VPS + `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build` (см. выше).

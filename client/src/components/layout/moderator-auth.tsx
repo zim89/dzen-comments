@@ -29,7 +29,10 @@ export function ModeratorAuth() {
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: {
+      email: 'moderator@example.com',
+      password: 'moderator123',
+    },
   });
 
   if (isAuthenticated) {
